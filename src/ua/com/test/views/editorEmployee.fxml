@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.com.test.controllers.EditorController">
+  <tabs>
+    <Tab fx:id="tabCompany" text="Company">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <TableView fx:id="tableCompany" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="columnNameCompSup" prefWidth="75.0" text="Name Company" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+                  <Pane layoutX="133.0" layoutY="171.0" prefHeight="50.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <Label layoutX="112.0" layoutY="17.0" text="Name Company" />
+                        <TextField fx:id="textFieldNameCompany" layoutX="215.0" layoutY="13.0" />
+                        <Button fx:id="btnAddComp" layoutX="379.0" layoutY="13.0" mnemonicParsing="false" onAction="#actionBtn" text="Add" />
+                        <Button fx:id="btnUpdateComp" layoutX="437.0" layoutY="13.0" mnemonicParsing="false" onAction="#actionBtn" text="Update" />
+                        <Button fx:id="btnDeleteComp" layoutX="516.0" layoutY="13.0" mnemonicParsing="false" onAction="#actionBtn" text="Delete" />
+                        <Button fx:id="btnNewCompany" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#actionBtn" text="New Company" />
+                     </children>
+                  </Pane>
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab fx:id="tabEmployee" text="Employee">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <TableView fx:id="tableEmployee" layoutX="74.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="columnName" prefWidth="75.0" text="Name" />
+                      <TableColumn fx:id="columnNameCompany" prefWidth="75.0" text="Company" />
+                        <TableColumn fx:id="columnSalary" prefWidth="75.0" text="Salary" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+                  <Pane layoutX="141.0" layoutY="171.0" prefHeight="120.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <Label layoutX="170.0" layoutY="15.0" text="Name" />
+                        <Label layoutX="159.0" layoutY="51.0" text="Company " />
+                        <Label layoutX="170.0" layoutY="87.0" text="Salary" />
+                        <TextField fx:id="textFieldName" layoutX="226.0" layoutY="11.0" />
+                        <ComboBox fx:id="comboBoxCompany" layoutX="225.0" layoutY="47.0" prefWidth="150.0" />
+                        <TextField fx:id="textFieldSalary" layoutX="226.0" layoutY="83.0" />
+                        <Button fx:id="btnAddEmployee" layoutX="386.0" layoutY="47.0" mnemonicParsing="false" onAction="#actionBtn" text="Add" />
+                        <Button fx:id="btnUpdateEmployee" layoutX="444.0" layoutY="47.0" mnemonicParsing="false" onAction="#actionBtn" text="Update" />
+                        <Button fx:id="btnDeleteEmployee" layoutX="516.0" layoutY="48.0" mnemonicParsing="false" onAction="#actionBtn" text="Delete" />
+                        <Button fx:id="btnNewEmployee" layoutX="38.0" layoutY="47.0" mnemonicParsing="false" onAction="#actionBtn" text="New Employee" styleClass="kfdshakf"/>
+                     </children>
+                  </Pane>
+               </children></AnchorPane>
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>

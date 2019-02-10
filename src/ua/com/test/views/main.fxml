@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.com.test.controllers.MainController">
+    <children>
+        <HBox maxHeight="200.0" prefHeight="70.0" prefWidth="150.0">
+            <children>
+                <Button fx:id="btnEditor" mnemonicParsing="false" onAction="#showEditor" text="Edit Database">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+        <AnchorPane prefHeight="334.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+            <children>
+                <TableView fx:id="tableMain" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="357.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+               <columns>
+                  <TableColumn fx:id="columnCompanyName" editable="false" prefWidth="75.0" sortable="false" text="Company Name" />
+                  <TableColumn fx:id="columnCountEmployee" editable="false" prefWidth="75.0" sortable="false" text="Employee Count" />
+                  <TableColumn fx:id="columnMediumSalary" editable="false" prefWidth="75.0" sortType="DESCENDING" text="Average Salary" />
+               </columns>
+                </TableView>
+            </children>
+            <cursor>
+                <Cursor fx:constant="S_RESIZE" />
+            </cursor>
+        </AnchorPane>
+        <HBox prefHeight="50.0" prefWidth="200.0">
+            <children>
+                <Label fx:id="labelSalary" text="Max salary in Company" />
+            </children>
+        </HBox>
+    </children>
+</VBox>
