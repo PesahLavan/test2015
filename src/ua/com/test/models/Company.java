@@ -1,22 +1,49 @@
 package ua.com.test.models;
 
-public class Company {
-    private Integer id;
-    private String name;
+import javafx.beans.property.*;
 
-    public Integer getId() {
-        return id;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
+
+
+public class Company implements Serializable {
+    private SimpleIntegerProperty id;
+    private SimpleStringProperty name;
+
+    public Company() {
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Company(String name) {
+        this.name = new SimpleStringProperty(name);
     }
 
-    public String getName() {
+    public Company(Integer id, String name){
+        this.id = new SimpleIntegerProperty(id);
+        this.name = new SimpleStringProperty(name);
+    }
+
+    public IntegerProperty idProperty() {
+        return id ;
+    }
+
+    public int getId() {
+        return idProperty().get();
+    }
+
+    public void setId(int id) {
+        idProperty().set(id);
+    }
+
+    public StringProperty nameProperty(){
         return name;
     }
 
+    public String getName() {
+        return nameProperty().get();
+    }
+
     public void setName(String name) {
-        this.name = name;
+        nameProperty().set(name);
     }
 }

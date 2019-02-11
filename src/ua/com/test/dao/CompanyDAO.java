@@ -2,7 +2,10 @@ package ua.com.test.dao;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.com.test.database.SQLiteConnection;
+import ua.com.test.controllers.views.View;
 import ua.com.test.models.Company;
 
 import java.sql.PreparedStatement;
@@ -10,18 +13,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CompanyDAO extends AbstractDAO{
-    public ObservableList<Company> listCompany() throws SQLException {
+    private static final Logger log = LoggerFactory.getLogger(CompanyDAO.class);
+
+    public ObservableList<View> listCompany() {
+        ObservableList<View> list = FXCollections.observableArrayList();
         try (ResultSet rs = SQLiteConnection.getConnection().createStatement().executeQuery("select * from Company"))
         {
-            ObservableList<Company> list = FXCollections.observableArrayList();
             while (rs.next()) {
-                Company company = new Company();
-                company.setId(rs.getInt("id"));
-                company.setName(rs.getString("name"));
+                View company = new View(rs.getInt("id"), rs.getString("name"));
                 list.add(company);
             }
-            return list;
+        }catch (SQLException e){
+            log.error("Error read listCompany to DB", e);
         }
+        return list;
     }
 
     public void addCompany(Company company) {
@@ -29,7 +34,9 @@ public class CompanyDAO extends AbstractDAO{
         {
             stmt.setString(1, company.getName());
             stmt.execute();
-        } catch (SQLException e) { e.printStackTrace();}
+        } catch (SQLException e) {
+            log.error("Error addCompany to DB", e);
+        }
     }
 
     public void updateCompany (Company company){
@@ -37,7 +44,8 @@ public class CompanyDAO extends AbstractDAO{
             stmt.setString(1, company.getName());
             stmt.setInt(2, company.getId());
             stmt.execute();
-            stmt.close();
-        } catch (SQLException e) { e.printStackTrace();}
+        } catch (SQLException e) {
+            log.error("Error updateCompany to DB", e);
+        }
     }
 }

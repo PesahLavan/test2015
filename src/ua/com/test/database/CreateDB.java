@@ -27,31 +27,8 @@ public class CreateDB {
                     " [name] VARCHAR NOT NULL UNIQUE,  " +
                     "  [salary] INT)";
 
-            String sqlViewMain = "CREATE VIEW [Main] AS" +
-                    " select " +
-                    " Company.[name] as \"Name company\" ," +
-                    " count(Employee.[company_id]) as \"Count employee\"," +
-                    " sum(Employee.[salary])/count(Company.[name]) as \"Average salary\"," +
-                    " max(Employee.[salary]) as \"Max salary\" " +
-                    " from Company" +
-                    " left outer join [Employee] on Company.[id]=Employee.[company_id]" +
-                    " group by  Company.[id];";
-
-            String sqlViewEditor = "CREATE VIEW [Editor] AS" +
-                    " select " +
-                    " Employee.[id] as \"Id_Employee\"," +
-                    " Employee.[company_id] as \"Id_Company\"," +
-                    " Company.[name] as \"Name_company\"," +
-                    " Employee.[name] as \"Name\"," +
-                    " Employee.[salary] as \"Salary\"" +
-                    " from Employee " +
-                    " left outer join [Company] on Company.[id]=Employee.[company_id]"+
-                    " group by  Employee.[name];";
-
             stmt.executeUpdate(sqlCompany);
             stmt.executeUpdate(sqlEmployee);
-            stmt.executeUpdate(sqlViewMain);
-            stmt.executeUpdate(sqlViewEditor);
             stmt.close();
             PreparedStatement stmtm = SQLiteConnection.getConnection().prepareStatement("insert into Company (name) values('Unemployed')");
             stmtm.execute();

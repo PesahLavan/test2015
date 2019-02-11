@@ -1,4 +1,4 @@
-package ua.com.test.interfaces;
+package ua.com.test.controllers.views;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -35,6 +35,12 @@ public class View implements Serializable{
         this.maxSalary = new SimpleIntegerProperty(maxSalary);
     }
 
+    public View(int id, int idCompany, String nameEmployee, int salary) {
+        this.idEmployee = new SimpleIntegerProperty(id);
+        this.idCompany = new SimpleIntegerProperty(idCompany);
+        this.nameEmployee = new SimpleStringProperty(nameEmployee);
+        this.salary = new SimpleIntegerProperty(salary);
+    }
 
     public IntegerProperty idEmployeeProperty() {
         return idEmployee ;

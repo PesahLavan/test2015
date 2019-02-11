@@ -1,12 +1,5 @@
 package ua.com.test.controllers;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ua.com.test.dao.CompanyDAO;
-import ua.com.test.dao.EditorDAO;
-import ua.com.test.dao.EmployeeDAO;
-import ua.com.test.interfaces.View;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,7 +7,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.StringConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.com.test.dao.CompanyDAO;
+import ua.com.test.dao.EmployeeDAO;
+import ua.com.test.controllers.views.View;
 import ua.com.test.models.Company;
 import ua.com.test.models.Employee;
 
@@ -26,31 +23,34 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class EditorController extends AbstractController implements Initializable {
-
     private static final Logger log = LoggerFactory.getLogger(EditorController.class);
 
     @FXML
-    private Button btnAddComp, btnUpdateComp , btnDeleteComp, btnAddEmployee, btnUpdateEmployee, btnDeleteEmployee;
+    private Button btnAddComp, btnUpdateComp , btnDeleteComp, btnAddEmployee, btnUpdateEmployee, btnDeleteEmployee,
+            btnNewEmployee, btnNewCompany;
 
     @FXML
     private TableView tableCompany, tableEmployee;
     @FXML
-    private TableColumn<View, String> columnNameCompSup, columnNameCompany, columnName;
+    private TableColumn<View, String> columnNameCompSup;
+    @FXML
+    private TableColumn<View, String> columnNameCompany;
+    @FXML
+    private TableColumn<View, String> columnName;
     @FXML
     private TableColumn<View, Integer>  columnSalary;
     @FXML
     private TextField textFieldNameCompany, textFieldName, textFieldSalary;
     @FXML
-    private ComboBox<Company> comboBoxCompany;
+    private ComboBox<View> comboBoxCompany;
     @FXML
-    private ObservableList<Employee> listEmployee = FXCollections.observableArrayList();
+    private ObservableList<View> listEmployee = FXCollections.observableArrayList();
     @FXML
-    private ObservableList<Company> listCompany = FXCollections.observableArrayList();
+    private ObservableList<View> listCompany = FXCollections.observableArrayList();
 
 
     private List<Integer> listParam = new LinkedList<>();
 
-    private EditorDAO editorDAO = new EditorDAO();
     private CompanyDAO companyDAO = new CompanyDAO();
     private EmployeeDAO employeeDAO = new EmployeeDAO();
 
@@ -60,7 +60,6 @@ public class EditorController extends AbstractController implements Initializabl
         initializeCompany();
         initializeEmployee();
     }
-
     public void initializeCompany(){
         tableCompany.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         columnNameCompSup.setCellValueFactory(new PropertyValueFactory<View, String>("companyName"));
@@ -68,7 +67,7 @@ public class EditorController extends AbstractController implements Initializabl
             TableRow rowCompany = new TableRow<>();
             rowCompany.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 1 && (! rowCompany.isEmpty()) ) {
-                    View selectionCompany = (View)tableCompany.getSelectionModel().getSelectedItem();
+                    View selectionCompany = (View) tableCompany.getSelectionModel().getSelectedItem();
                     String nameCompany = selectionCompany.getCompanyName();
                     int id = selectionCompany.getIdCompany();
                     listParam.clear();
@@ -87,60 +86,34 @@ public class EditorController extends AbstractController implements Initializabl
         btnDeleteComp.setDisable(true);
         textFieldNameCompany.setDisable(true);
         textFieldNameCompany.setText("");
-
-        try {
-            listCompany = companyDAO.listCompany();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        listCompany = companyDAO.listCompany();
         tableCompany.setItems(listCompany);
     }
 
     public void initializeEmployee(){
-        try {
-            listEmployee = employeeDAO.listEmployee();
-            listCompany = companyDAO.listCompany();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        listCompany = companyDAO.listCompany();
+        listEmployee = convertViewForEmployee(listCompany, employeeDAO.listEmployee());
         tableEmployee.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         columnName.setCellValueFactory(new PropertyValueFactory<View, String>("nameEmployee"));
         columnNameCompany.setCellValueFactory(new PropertyValueFactory<View, String>("companyName"));
         columnSalary.setCellValueFactory(new PropertyValueFactory<View, Integer>("salary"));
-
         comboBoxCompany.setItems(listCompany);
-        comboBoxCompany.setConverter(new StringConverter<Company>() {
-            @Override
-            public String toString(Company company) {
-                if (company == null){
-                    return "";
-                } else {
-                    return company.getName();
-                }
-            }
-
-            @Override
-            public Company fromString(String string) {
-                return null;
-            }
-        });
-
+        comboBoxCompany.setConverter(converter());
         tableEmployee.setItems(listEmployee);
-
         tableEmployee.setRowFactory( tv -> {
             TableRow rowEmployee = new TableRow<>();
             rowEmployee.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 1 && (! rowEmployee.isEmpty()) ) {
-                    Employee selectionEmployee = (Employee) tableEmployee.getSelectionModel().getSelectedItem();
-                    int id = selectionEmployee.getId();
+                    View selectionEmployee = (View)tableEmployee.getSelectionModel().getSelectedItem();
+                    int id = selectionEmployee.getIdEmployee();
                     listParam.clear();
                     listParam.add(0,id);
                     int salary = selectionEmployee.getSalary();
-                    String name = selectionEmployee.getName();
+                    String name = selectionEmployee.getNameEmployer();
                     textFieldName.setText(name);
                     textFieldSalary.setText(String.valueOf(salary));
                     comboBoxCompany.setValue(selectionEmployee);
-                    listParam.add(1,selectionEmployee.getCompanyId());
+                    listParam.add(1,selectionEmployee.getIdCompany());
                     btnUpdateEmployee.setDisable(false);
                     btnDeleteEmployee.setDisable(false);
                     btnAddEmployee.setDisable(true);
@@ -172,7 +145,7 @@ public class EditorController extends AbstractController implements Initializabl
         }
 
         Button clickedButton = (Button) source;
-        Company company = new Company();
+
         switch (clickedButton.getId()){
             case "btnNewCompany":
                 btnUpdateComp.setDisable(true);
@@ -183,29 +156,28 @@ public class EditorController extends AbstractController implements Initializabl
                 break;
 
             case "btnAddComp":
-                company.setId(null);
-                company.setName(textFieldNameCompany.getText());
-                companyDAO.addCompany(company);
+                companyDAO.addCompany(new Company(textFieldNameCompany.getText()));
                 initializeCompany();
                 initializeEmployee();
                 break;
 
             case "btnUpdateComp":
-                company.setId(listParam.get(0));
-                company.setName(textFieldNameCompany.getText());
-                companyDAO.updateCompany(company);
+                companyDAO.updateCompany(new Company(listParam.get(0), textFieldNameCompany.getText()));
                 tableCompany.refresh();
                 initializeCompany();
                 initializeEmployee();
                 break;
 
             case "btnDeleteComp":
-                int companyId = listParam.get(0) ;
-                if (companyId!=1){
-                    companyDAO.delete(companyId,"Company");
+                int idComp = listParam.get(0) ;
+                if (idComp!=1){
+                    companyDAO.delete(idComp,"Company");
                     for (int i = 0; i < listEmployee.size(); i++) {
-                        if (listEmployee.get(i).getCompanyId() == companyId) {
-                            employeeDAO.updateEmployee(listEmployee.get(i).getId(),1, listEmployee.get(i).getName(), 0);
+                        if (listEmployee.get(i).getIdCompany()== idComp) {
+                            employeeDAO.updateEmployee(
+                                    new Employee(listEmployee.get(i).getIdEmployee(),
+                                            1, listEmployee.get(i).getNameEmployer(),
+                                            0));
                         }
                     }
                     initializeCompany();
@@ -233,31 +205,29 @@ public class EditorController extends AbstractController implements Initializabl
                 int salary;
                 if (textFieldSalary.getText().equals("")) salary = 0;
                 else
-                try {
-                    salary = Integer.valueOf(textFieldSalary.getText());
-                    if (salary < 0) throw new  NumberFormatException();
+                    try {
+                        salary = Integer.valueOf(textFieldSalary.getText());
+                        if (salary < 0) throw new  NumberFormatException();
 
-                }catch (NumberFormatException e){
-                    showMessage(actionEvent);
-                    break;
-                }
+                    }catch (NumberFormatException e){
+                        showMessage(actionEvent);
+                        break;
+                    }
                 int idCompany;
                 try {
-                    idCompany = comboBoxCompany.getValue().getId();
+                    idCompany = comboBoxCompany.getValue().getIdCompany();
                 }catch (NullPointerException e)
                 {
                     idCompany = 1;
                 }
                 if (idCompany == 1) salary =0;
-                employeeDAO.addEmployee(idCompany, name, salary, "Employee");
+                employeeDAO.addEmployee(new Employee(idCompany, name, salary) );
                 btnAddEmployee.setDisable(true);
                 initializeCompany();
                 initializeEmployee();
                 break;
 
             case "btnUpdateEmployee":
-                int idEmployee = listParam.get(0);
-                name = textFieldName.getText();
                 try {
                     salary = Integer.valueOf(textFieldSalary.getText());
                     if (salary <= 0) throw new  NumberFormatException();
@@ -265,19 +235,17 @@ public class EditorController extends AbstractController implements Initializabl
                     showMessage(actionEvent);
                     break;
                 }
-
                 idCompany = listParam.get(1);
-                int idCompanyCh = comboBoxCompany.getValue().getId();
+                int idCompanyCh = comboBoxCompany.getValue().getIdCompany();
                 if (idCompany != idCompanyCh) idCompany = idCompanyCh;
                 if (idCompany == 1) salary =0;
-                employeeDAO.updateEmployee(idEmployee,idCompany, name, salary/*, "Editor"*/);
+                employeeDAO.updateEmployee(new Employee(listParam.get(0), idCompany, textFieldName.getText(), salary));
                 initializeCompany();
                 initializeEmployee();
                 break;
 
             case "btnDeleteEmployee":
-                idEmployee = listParam.get(0) ;
-                employeeDAO.delete(idEmployee,"Employee");
+                employeeDAO.delete(listParam.get(0) ,"Employee");
                 initializeCompany();
                 initializeEmployee();
                 break;
@@ -288,7 +256,7 @@ public class EditorController extends AbstractController implements Initializabl
         try {
             showElement(actionEvent, "message.fxml", "Note of warning");
         } catch (IOException e) {
-            log.error("Error while showMessage", e);
+            log.error("Error showMessage", e);
         }
     }
 }

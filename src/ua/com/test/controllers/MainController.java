@@ -2,8 +2,9 @@ package ua.com.test.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ua.com.test.dao.MainDAO;
-import ua.com.test.interfaces.View;
+import ua.com.test.dao.CompanyDAO;
+import ua.com.test.dao.EmployeeDAO;
+import ua.com.test.controllers.views.View;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,13 +16,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class MainController extends AbstractController implements Initializable{
 
     private static final Logger log = LoggerFactory.getLogger(MainController.class);
-    private MainDAO mainDAO = new MainDAO();
     @FXML
     private Button btnEditor;
     @FXML
@@ -42,16 +41,16 @@ public class MainController extends AbstractController implements Initializable{
         initializeMain();
     }
 
+
+    private CompanyDAO companyDAO = new CompanyDAO();
+    private EmployeeDAO employeeDAO = new EmployeeDAO();
+
     public void initializeMain(){
         tableMain.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         columnCompanyName.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         columnCountEmployee.setCellValueFactory(new PropertyValueFactory<>("countEmployee"));
         columnMediumSalary.setCellValueFactory(new PropertyValueFactory<>("salary"));
-        try {
-            listMain = mainDAO.listMain();
-        } catch (SQLException e) {
-            log.error("Database Load Error", e);
-        }
+        listMain =convertViewForMain(companyDAO.listCompany(), employeeDAO.listEmployee());
         tableMain.setItems(listMain);
         tableMain.getSortOrder().add(columnMediumSalary);
 
